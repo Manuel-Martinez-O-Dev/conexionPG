@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>agregar-pelicula</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        input[type="number"],
+        textarea {
+            width: calc(100% - 22px);
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+    <h2>Registro de Película</h2>
+    <form id="registroPelicula">
+        <label for="titulo">Título</label>
+        <input id="titulo" type="text" name="titulo" required>
+        
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+        
+        <label for="direccion_url">URL de la Película</label>
+        <input id="direccion_url" type="url" name="direccion_url" required>
+        
+        <label for="portada_url">URL de la Portada</label>
+        <input id="portada_url" type="url" name="portada_url" required>
+        
+        <label for="duracion">Duración (minutos)</label>
+        <input id="duracion" type="number" name="duracion" min="1" required>
+        
+        <label for="año_estreno">Año de Estreno</label>
+        <input id="año_estreno" type="number" name="año_estreno" min="1900" max="9999" required>
+        
+        <button type="submit">Registrar Película</button>
+    </form>
+
+    <script>
+        document.getElementById('registroPelicula').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Obtener los valores de los campos del formulario
+            const titulo = document.getElementById('titulo').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const direccion_url = document.getElementById('direccion_url').value;
+            const portada_url = document.getElementById('portada_url').value;
+            const duracion = parseInt(document.getElementById('duracion').value);
+            const año_estreno = parseInt(document.getElementById('año_estreno').value);
+
+            // Crear objeto con los datos de la película
+            const peliculaData = {
+                titulo: titulo,
+                descripcion: descripcion,
+                direccion_url: direccion_url,
+                portada_url: portada_url,
+                duracion: duracion,
+                año_estreno: año_estreno
+            };
+
+            // Enviar los datos al servidor usando fetch
+            fetch('/agregar-pelicula', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(peliculaData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Éxito:', data);
+                alert('Película registrada con éxito');
+                // Limpiar los campos del formulario después de registrar
+                document.getElementById('titulo').value = '';
+                document.getElementById('descripcion').value = '';
+                document.getElementById('direccion_url').value = '';
+                document.getElementById('portada_url').value = '';
+                document.getElementById('duracion').value = '';
+                document.getElementById('año_estreno').value = '';
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Hubo un error al registrar la película');
+            });
+        });
+    </script>
+</body>
+</html>

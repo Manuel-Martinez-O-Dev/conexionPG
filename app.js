@@ -17,7 +17,9 @@ app.use(bodyParser.json());
 
 
 app.get('/', (req, res) => {
-    res.send('<p> a la url agregale /register despues del 5000, quedaria como 5000/register </p>')
+    res.sendFile('./rutas/index.html', {
+        root: __dirname
+    })
 });
 
 // ruta register
@@ -43,6 +45,30 @@ app.post('/register', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+// ruta agregar pelicula
+
+app.get('/agregar-pelicula', (req, res) => {
+    res.sendFile('./rutas/agregar-pelicula.html', {
+      root: __dirname
+    })
+});
+app.post('/agregar-pelicula', async (req, res) => {
+    const { titulo, descripcion, direccion_url, portada_url, duracion, año_estreno } = req.body;
+    const fecha_registro = new Date(); // Fecha actual para fecha_registro
+
+    try {
+        const result = await pool.query(
+            'INSERT INTO pelicula(titulo, descripcion, direccion_url, portada_url, duracion, año_estreno, fecha_registro) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            [titulo, descripcion, direccion_url, portada_url, duracion, año_estreno, fecha_registro]
+        );
+        res.status(201).json(result.rows[0]); // Devolver la película recién registrada como JSON
+    } catch (error) {
+        console.error('Error registering movie:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Servidor escuchando en http://localhost:${port}`);
