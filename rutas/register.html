@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url(https://integrapersonalbranding.com.mx/wp-content/uploads/2021/02/peliculas-marca-personal-1.png); /* Color de fondo oscuro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff; /* Color de texto blanco */
+        }
+        
+        h2 {
+            margin-right: 60px;
+            font-size: 36px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            color: #000000; /* Color de texto neon */
+            text-shadow: 0 0 8px #39ff14, 0 0 12px #39ff14; /* Sombra de texto neon */
+        }
+        
+        #registerForm {
+            width: 300px;
+            backdrop-filter: blur(10px); /* Color de fondo del formulario */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        label {
+            color: #41b300; /* Color de texto blanco para etiquetas */
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        input[type="text"],
+        input[type="email"] {
+            width: calc(100% - 22px);
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #000000; /* Borde gris */
+            border-radius: 4px;
+            margin-bottom: 10px;
+            background-color: rgba(19, 1, 1, 0.6); /* Color de fondo gris oscuro */
+            color: #00ffea; /* Color de texto blanco */
+        }
+        
+        button[type="submit"] {
+            background-color: #070200; /* Color de fondo neon */
+            color: #fff; /* Color de texto blanco */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        
+        button[type="submit"]:hover {
+            background-color: #08a021;
+            color: black /* Color de fondo neon al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+    <h2>REGISTRATE</h2>
+    <form id="registerForm">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" required>
+        <br>
+        <label for="apellido">Apellido</label>
+        <input id="apellido" type="text" required>
+        <br>
+        <label for="nombre_usuario">Nombre de Usuario</label>
+        <input id="nombre_usuario" type="text" required>
+        <br>
+        <label for="correo_electronico">Correo Electrónico</label>
+        <input id="correo_electronico" type="email" required>
+        <br>
+        <button type="submit">Registrar</button>
+    </form>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const apellido = document.getElementById('apellido').value;
+            const nombre_usuario = document.getElementById('nombre_usuario').value;
+            const correo_electronico = document.getElementById('correo_electronico').value;
+
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nombre, apellido, nombre_usuario, correo_electronico })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+            alert('registrado con exito')
+
+            document.getElementById('nombre').value = '';
+            document.getElementById('apellido').value = '';
+            document.getElementById('nombre_usuario').value = '';
+            document.getElementById('correo_electronico').value = '';
+        });
+    </script>
+</body>
+</html>
