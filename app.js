@@ -17,32 +17,101 @@ app.use(bodyParser.json());
 
 
 app.get('/', (req, res) => {
-    res.send('<p> a la url agregale /register despues del 5000, quedaria como 5000/register </p>')
+    res.sendFile('./rutas/index.html', {
+        root: __dirname
+    })
 });
 
 // ruta register
 
-app.get('/register', (req, res) => {
-    res.sendFile('./rutas/register.html', {
+// app.get('/register', (req, res) => {
+//     res.sendFile('./rutas/register.html', {
+//       root: __dirname
+//     })
+// });
+
+// app.post('/register', async (req, res) => {
+//     const { nombre, apellido, nombre_usuario, correo_electronico } = req.body;
+//     const fecha_registro = new Date();
+  
+//     try {
+//         const result = await pool.query(
+//             'INSERT INTO cliente (nombre, apellido, nombre_usuario, correo_electronico, activo, fecha_registro) VALUES ($1, $2, $3, $4, true, $5) RETURNING *',
+//             [nombre, apellido, nombre_usuario, correo_electronico, fecha_registro]
+//         );
+//         res.status(201).json(result.rows[0]);
+//     } catch (error) {
+//         console.error('Error registering user:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// });
+
+// // ruta agregar pelicula
+
+// app.get('/agregar-pelicula', (req, res) => {
+//     res.sendFile('./rutas/agregar-pelicula.html', {
+//       root: __dirname
+//     })
+// });
+// app.post('/agregar-pelicula', async (req, res) => {
+//     const { titulo, descripcion, direccion_url, portada_url, duracion, año_estreno } = req.body;
+//     const fecha_registro = new Date(); // Fecha actual para fecha_registro
+
+//     try {
+//         const result = await pool.query(
+//             'INSERT INTO pelicula(titulo, descripcion, direccion_url, portada_url, duracion, año_estreno, fecha_registro) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+//             [titulo, descripcion, direccion_url, portada_url, duracion, año_estreno, fecha_registro]
+//         );
+//         res.status(201).json(result.rows[0]); // Devolver la película recién registrada como JSON
+//     } catch (error) {
+//         console.error('Error registering movie:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// });
+
+
+// para cliente.html
+
+app.get('/cliente', (req, res) => {
+    res.sendFile('./rutas/cliente.html', {
       root: __dirname
     })
 });
 
-app.post('/register', async (req, res) => {
-    const { nombre, apellido, nombre_usuario, correo_electronico } = req.body;
-    const fecha_registro = new Date();
+app.post('/cliente', async (req, res) => {
+    const { nombre, apellido, nombre_usuario, correo_electronico, activo, fecha_registro } = req.body;
+  
+    const query = `
+      INSERT INTO cliente (nombre, apellido, nombre_usuario, correo_electronico, activo, fecha_registro)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+    `;
   
     try {
-        const result = await pool.query(
-            'INSERT INTO cliente (nombre, apellido, nombre_usuario, correo_electronico, activo, fecha_registro) VALUES ($1, $2, $3, $4, true, $5) RETURNING *',
-            [nombre, apellido, nombre_usuario, correo_electronico, fecha_registro]
-        );
-        res.status(201).json(result.rows[0]);
+      const result = await pool.query(query, [nombre, apellido, nombre_usuario, correo_electronico, activo, fecha_registro]);
+      res.status(201).json(result.rows[0]);
     } catch (error) {
-        console.error('Error registering user:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error al insertar el cliente:', error.stack);
+      res.status(500).send('Error al registrar el cliente');
     }
+  });
+
+app.get('/clientes', (req, res) => {
+    res.sendFile('./rutas/clientes.html', {
+      root: __dirname
+    })
 });
+
+app.get('/api/clientes', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM cliente');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener clientes:', error.stack);
+    res.status(500).send('Error al obtener clientes');
+  }
+});
+
 
 app.listen(port, () => {
     console.log(`Servidor escuchando en http://localhost:${port}`);

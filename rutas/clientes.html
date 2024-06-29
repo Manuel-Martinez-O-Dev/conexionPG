@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Clientes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Lista de Clientes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Nombre de Usuario</th>
+                <th>Correo Electrónico</th>
+                <th>Activo</th>
+                <th>Fecha de Registro</th>
+            </tr>
+        </thead>
+        <tbody id="clientesTableBody">
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchClientes() {
+            try {
+                const response = await fetch('/api/clientes');
+                const clientes = await response.json();
+
+                const tbody = document.getElementById('clientesTableBody');
+                tbody.innerHTML = '';
+
+                clientes.forEach(cliente => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${cliente.id_cliente}</td>
+                        <td>${cliente.nombre}</td>
+                        <td>${cliente.apellido}</td>
+                        <td>${cliente.nombre_usuario}</td>
+                        <td>${cliente.correo_electronico}</td>
+                        <td>${cliente.activo ? 'Sí' : 'No'}</td>
+                        <td>${new Date(cliente.fecha_registro).toLocaleString()}</td>
+                    `;
+
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error al obtener clientes:', error);
+            }
+        }
+
+        fetchClientes();
+    </script>
+
+</body>
+</html>
