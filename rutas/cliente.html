@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Cliente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="clienteForm">
+        <h2>Registro de Cliente</h2>
+        <input type="text" id="nombre" placeholder="Nombre" required>
+        <input type="text" id="apellido" placeholder="Apellido" required>
+        <input type="text" id="nombre_usuario" placeholder="Nombre de Usuario" required>
+        <input type="email" id="correo_electronico" placeholder="Correo Electrónico" required>
+        <button type="submit">Registrar</button>
+    </form>
+
+    <script>
+        document.getElementById('clienteForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const data = {
+                nombre: document.getElementById('nombre').value,
+                apellido: document.getElementById('apellido').value,
+                nombre_usuario: document.getElementById('nombre_usuario').value,
+                correo_electronico: document.getElementById('correo_electronico').value,
+                activo: true,
+                fecha_registro: new Date()
+            };
+
+            try {
+                const response = await fetch('/cliente', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Cliente registrado exitosamente');
+                } else {
+                    alert('Error al registrar el cliente');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error en el servidor');
+            }
+        });
+    </script>
+
+</body>
+</html>

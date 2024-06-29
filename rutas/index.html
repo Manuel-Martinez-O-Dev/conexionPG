@@ -1,206 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/416d2ebe74.js" crossorigin="anonymous"></script>
-    <link href="./assets/css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="./assets/css/responsive.css">
-    <title>ProjectoTaller</title>
-    <style>
-        
-    </style>
+  <meta charset="UTF-8">
+  <title> Mountain Hero Page | Nothing4us </title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css'><link rel="stylesheet" href="./style.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', serif;
+    }
+    body {
+        height: 100vh;
+        width: 100vw;
+    }
+    #top{
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #top::before{
+        content:'';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height:200px;
+        width: 100%;
+        background:linear-gradient(to top,#fff,transparent);
+        z-index: 1000;
+    }
+    #man{
+        top: inherit;
+        bottom: 0;
+    }
+    section img{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+    }
+    #text{
+        position: relative;
+        color:white;
+        font-size: 10rem;
+    }
+    #sec{
+        padding:100px;
+      padding-bottom:20px;
+    }
+    #sec h2{
+        font-size: 4rem;
+        margin-bottom: 30px;
+        color:#20496a;
+    }
+    #sec p{
+        font-size: 1.2rem;
+      line-height:2rem;
+      font-weight:300;
+        color:#20496a;
+    }
+    footer{
+      margin-top:30px;
+      display:flex;
+      padding:20px;
+      justify-content:space-evenly;
+      align-items:center;
+      background-color:#B0DFEA;
+    }
+    footer a{
+      color:#20496a;
+    }
+    footer a i{
+        transition:0.2s;
+    }
+    footer a:nth-of-type(3),footer a:nth-of-type(4), footer a:nth-of-type(5){
+    font-size:1.3rem;}
+    footer a i:hover{
+      transform:translateY(-10px);
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="container">
-              <a class="navbar-brand" href="#">
-                  <strong><span class="text-one">STREAM </span><span class="text-two">PROYECT</span></strong>
-              </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse flex-row-reverse" id="navbarSupportedContent">
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Inicio</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="http://localhost:5000/agregar-pelicula">AgregarPeliculas</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Series</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="http://localhost:5000/register">Register</a>
-                  </li>
-                  <li class="nav-item">
-                    <form class="d-flex">
-                      <input class="form-control me-2 btn btn-outline-light" type="search" placeholder="buscar" aria-label="Search">
-                      <button class="btn btn-outline-light" type="submit">Buscar</button>
-                    </form>
-                  </li>
-                </ul>
-              </div>
-            </div>
-        </nav>
-        <section class="container d-flex flex-column-reverse flex-md-row flex-lg-row align-items-start p-4 content-header">
-            <div class="text-header d-flex flex-column justify-content-center">
-                <h1 class="title-content-header">IntensaMente 2</h1>              
-                <p class="text-header-one">Inside Out 2 es una película animada estadounidense producida por Pixar Animation Studios para Walt Disney Pictures. La secuela de Inside Out, fue dirigida por Kelsey Mann, producida por Mark Nielsen y escrita por Meg LeFauve.</p>
-                <div class="mt-4">
-                    <a class="btn btn-danger btn-format-one text-white me-5" href="https://www.youtube.com/watch?v=9bol4Yyx9Gs">
-                        Ver pelicula
-                    </a>
-                </div>
-            </div>
-        </section>
-    </header>
-    <main class="">
-      <section class="container mt-5 pt-5" id="smart">
-        <div class="mb-5 pb-5">
-           <div class="row">
-             <div class="col-sm-12 col-md-12 col-lg-6">
-               <h1 class="display-5 w-85 fw-bold">Peliculas</h3>
-             </div>
-           </div>
-        </div>
-      </section>
-      <section class="container mt-1 pt-1" id="choose">
-        <div class="row row-cols-1 row-cols-md-5 g-4">
-          <div class="col">
-            <div class="card h-55">
-              <img src="./assets/images/" class="card-img-top" alt="The ...">
-              <div class="card-body">
-                <a href="https://www.youtube.com/"> <h5 class="card-title ">THE </h5></a>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card h-55 bg-transparent">
-              <img src="./assets/images/" class="card-img-top" alt="The ...">
-              <div class="card-body">
-                <a href="https://www.youtube.com/"><h5 class="card-title">THE </h5></a>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card h-55 bg-transparent">
-              <img src="./assets/images/" class="card-img-top" alt="Don't Look Up">
-              <div class="card-body">
-                <a href="https://www.youtube.com/"><h5 class="card-title">D......</h5></a>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card h-55 bg-transparent">
-              <img src="./assets/images/" class="card-img-top" alt="">
-              <div class="card-body">
-                <a href="https://www.youtube.com/"><h5 class="card-title">....</h5></a>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card h-55 bg-transparent">
-              <img src="./assets/images/" class="card-img-top" alt="">
-              <div class="card-body">
-                <a href="https://www.youtube.com/"><h5 class="card-title">THE ...</h5></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<!-- partial:index.partial.html -->
+<section id="top">
+      <img src="https://aryan-tayal.github.io/Mountains-Parallax/bg.jpg" id="bg" />
+      <h2 id="text">movies</h2>
+      <img src="https://aryan-tayal.github.io/Mountains-Parallax/man.png" id="man" />
+      <img src="https://aryan-tayal.github.io/Mountains-Parallax/clouds_1.png" id="clouds_1" />
+      <img src="https://aryan-tayal.github.io/Mountains-Parallax/clouds_2.png" id="clouds_2" />
+      <img src="https://aryan-tayal.github.io/Mountains-Parallax/mountain_left.png" id="mountain_left" />
+      <img src="https://aryan-tayal.github.io/Mountains-Parallax/mountain_right.png
+" id="mountain_right" />
+    </section>
+    <section id="sec">
+      <h2>Coffe+ plataforma de videos</h2>
+      <p>
+        Una plataforma de videos donde encontraras una gran variedad de peliculas, series y mas contenido de tu agrado en muy pocos click
+    </section>
+<footer>
+  <a href=""><i class="fa-solid fa-house"> inicio  </i></a>
+  <a href=""><i class="fa-solid fa-mountain-sun"> peliculas </i></a>
+  <a href="/cliente"><i class="fa-solid fa-person-hiking"> registrate </i></a>
+  <a href="/clientes"><i class="fa-solid fa-people-group"> usuarios  </i></a>
+  <a href=""><i class="fa-solid fa-gears"> admin </i></a>
+</footer>
+<!-- partial -->
+  <script>
+    const mountainLeft = document.querySelector('#mountain_left');
+    const mountainRight = document.querySelector('#mountain_right');
+    const cloud1 = document.querySelector('#clouds_1');
+    const cloud2 = document.querySelector('#clouds_2');
+    const text = document.querySelector('#text');
+    const man = document.querySelector('#man');
 
+    window.addEventListener('scroll',()=>{
+        let value = scrollY;
+        mountainLeft.style.left = `-${value/0.7}px`
+        cloud2.style.left = `-${value*2}px`
+        mountainRight.style.left = `${value/0.7}px`
+        cloud1.style.left = `${value*2}px`
+        text.style.bottom = `-${value}px`;
+        man.style.height = `${window.innerHeight - value}px`
+    })
+  </script>
 
-      <section>
-        <section class="container mt-5 pt-5" id="smart">
-          <div class="mb-5 pb-5">
-             <div class="row">
-               <div class="col-sm-12 col-md-12 col-lg-6">
-                 <h1 class="display-5 w-85 fw-bold">Series</h3>
-               </div>
-             </div>
-          </div>
-        </section>
-        <section class="container mt-1 pt-1" id="choose">
-          <div class="row row-cols-1 row-cols-md-5 g-4">
-            <div class="col">
-              <div class="card h-55 bg-transparent">
-                <img src="./assets/images/" class="card-img-top" alt="">
-                <div class="card-body">
-                  <a href="https://www.youtube.com/"><h5 class="card-title">----.......</h5></a>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card h-55 bg-transparent">
-                <img src="./assets/images/" class="card-img-top" alt="">
-                <div class="card-body">
-                  <a href="https://www.youtube.com"><h5 class="card-title">......</h5></a>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card h-55 bg-transparent">
-                <img src="./assets/images/" class="card-img-top" alt="">
-                <div class="card-body">
-                  <a href="https://www.youtube.com/"><h5 class="card-title">....</h5></a>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card h-55 bg-transparent">
-                <img src="./assets/images/" class="card-img-top" alt="">
-                <div class="card-body">
-                  <a href="https://www.youtube.com/"><h5 class="card-title">---.-.-.-.--</h5></a>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card h-55 bg-transparent">
-                <img src="./assets/images/" class="card-img-top" alt="...">
-                <div class="card-body">
-                  <a href="https://www.youtube.com/"><h5 class="card-title">.....</h5></a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </section>
-    </main>
-
-    <footer class="end">
-        <div class="grupo1 container">
-          <div class="box col-sm-12">
-            <h5>Stream Proyect</h5>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Mollitia asperiores iste debitis architecto laborum, magni quae enim quod! Ratione, laborum.
-            </p>
-            <p>Lorem ipsum dolor sit amet.</p>
-          </div>
-  
-          <div class="box col-sm-12">
-            <h3>Sobre Nosotros</h3>
-            <p>Lorem ipsum dolor sit amet consectetur.</p>
-            <p>Lorem ipsum dolor sit amet consectetur.</p>
-          </div>
-          <div class="box col-sm-12">
-            <h3>Contactos</h3>
-            <div class="red-social">
-              <a href="#"><i class="fa-brands fa-facebook fa-3x"></i>face</a>
-              <a href="#"><i class="fa-brands fa-twitter fa-3x"></i>twitter</a>
-              <a href="#"><i class="fa-brands fa-instagram fa-3x"></i>insta</a>
-              <a href="#"><i class="fa-brands fa-gitlab fa-3x"></i>gitlab</a>
-            </div>
-          </div>
-        </div>
-    </footer>
-  <script src="./assets/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
