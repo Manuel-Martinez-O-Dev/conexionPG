@@ -1,6 +1,7 @@
 const express = require('express');
 const { Pool } = require('pg');
 const bodyParser = require('body-parser');
+const session = require('express-session');
 
 const app = express();
 const port = 5000;
@@ -21,6 +22,53 @@ app.get('/', (req, res) => {
         root: __dirname
     })
 });
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+  secret: 'mysecretkey',
+  resave: false,
+  saveUninitialized: true,
+  // cookie: { secure: false } // Cambiar a true en producción
+}));
+
+app.get('/login', (req, res) => {
+  res.sendFile('./rutas/login.html', {
+      root: __dirname
+  })
+});
+
+app.post('/api/login', async (req, res) => {
+  const { nombre_usuario, correo_electronico } = req.body;
+  try {
+    const result = await pool.query(
+      'SELECT * FROM cliente WHERE nombre_usuario = $1 AND correo_electronico = $2',
+      [nombre_usuario, correo_electronico]
+    );
+
+    if (result.rows.length > 0) {
+      req.session.user = result.rows[0];
+      res.status(200).json({ message: 'Inicio de sesión exitoso' });
+    } else {
+      res.status(401).json({ message: 'Credenciales incorrectas' });
+    }
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error.stack);
+    res.status(500).send('Error al iniciar sesión');
+  }
+});
+app.get('/api/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500);
+    }
+    res.status(200);
+    console.log('closed session');
+    res.redirect('/login');
+    
+  });
+});
+
+
 
 // ruta register
 
@@ -99,6 +147,13 @@ app.post('/cliente', async (req, res) => {
 // clientes.html en este se muestra los usuarios registrados
 
 app.get('/clientes', (req, res) => {
+
+  console.log(!req.session.user)
+  console.log(req.session.user)
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
     res.sendFile('./rutas/clientes.html', {
       root: __dirname
     })
@@ -117,6 +172,10 @@ app.get('/api/clientes', async (req, res) => {
 // admin.html
 
 app.get('/admin', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
   res.sendFile('./rutas/admin.html', {
     root: __dirname
   })
@@ -125,6 +184,11 @@ app.get('/admin', (req, res) => {
 // usuarios.html
 
 app.get('/admin/usuarios', (req, res) => {
+
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
   res.sendFile('./rutas/admin/usuarios.html', {
     root: __dirname
   })
@@ -177,6 +241,11 @@ app.delete('/admin/usuarios', async (req, res) => {
 // admin/peliculas.html
 
 app.get('/admin/peliculas', (req, res) => {
+
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
   res.sendFile('./rutas/admin/peliculas.html', {
     root: __dirname
   })
@@ -247,13 +316,30 @@ app.delete('/admin/peliculas', async (req, res) => {
 // peliculas.html para mostrar las peliculas
 
 app.get('/peliculas', (req, res) => {
+
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
   res.sendFile('./rutas/peliculas.html', {
       root: __dirname
   })
 });
 app.get('/api/peliculas', async (req, res) => {
+
   try {
     const result = await pool.query('SELECT * FROM pelicula');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener películas:', error.stack);
+    res.status(500).send('Error al obtener películas');
+  }
+});
+
+app.get('/api/peliculas/inicio', async (req, res) => {
+
+  try {
+    const result = await pool.query('SELECT * FROM pelicula ORDER BY fecha_registro DESC LIMIT 3');
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error al obtener películas:', error.stack);

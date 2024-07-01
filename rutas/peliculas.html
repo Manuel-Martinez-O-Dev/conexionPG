@@ -52,6 +52,9 @@
     </style>
 </head>
 <body>
+    <div id="cont">
+
+    </div>
     <script>
         async function fetchPeliculas() {
             try {
@@ -74,7 +77,6 @@
                             <div class="ano-estreno">Año: ${pelicula.año_estreno}</div>
                         </div>
                     `;
-
                     document.body.appendChild(peliculaDiv);
                 });
             } catch (error) {
