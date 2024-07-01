@@ -10,64 +10,66 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        .cliente {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 250px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s;
         }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
+        .cliente:hover {
+            transform: scale(1.05);
         }
-        th {
-            background-color: #f2f2f2;
+        .info {
+            margin-bottom: 10px;
+        }
+        .info div {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        .activo {
+            background-color: rgb(216, 255, 216);
+        }
+        .inactivo {
+            background-color: rgb(255, 220, 220);
         }
     </style>
 </head>
 <body>
-
-    <h2>Lista de Clientes</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Nombre de Usuario</th>
-                <th>Correo Electrónico</th>
-                <th>Activo</th>
-                <th>Fecha de Registro</th>
-            </tr>
-        </thead>
-        <tbody id="clientesTableBody">
-        </tbody>
-    </table>
-
     <script>
         async function fetchClientes() {
             try {
                 const response = await fetch('/api/clientes');
                 const clientes = await response.json();
 
-                const tbody = document.getElementById('clientesTableBody');
-                tbody.innerHTML = '';
-
                 clientes.forEach(cliente => {
-                    const row = document.createElement('tr');
+                    const clienteDiv = document.createElement('div');
+                    clienteDiv.className = 'cliente';
 
-                    row.innerHTML = `
-                        <td>${cliente.id_cliente}</td>
-                        <td>${cliente.nombre}</td>
-                        <td>${cliente.apellido}</td>
-                        <td>${cliente.nombre_usuario}</td>
-                        <td>${cliente.correo_electronico}</td>
-                        <td>${cliente.activo ? 'Sí' : 'No'}</td>
-                        <td>${new Date(cliente.fecha_registro).toLocaleString()}</td>
+                    clienteDiv.innerHTML = `
+                        <div class="info">
+                            <div><strong>ID:</strong> ${cliente.id_cliente}</div>
+                            <div><strong>Nombre:</strong> ${cliente.nombre}</div>
+                            <div><strong>Apellido:</strong> ${cliente.apellido || 'N/A'}</div>
+                            <div><strong>Usuario:</strong> ${cliente.nombre_usuario}</div>
+                            <div><strong>Email:</strong> ${cliente.correo_electronico}</div>
+                            <div class="${cliente.activo ? 'activo' : 'inactivo'}">
+                                <strong>Estado:</strong> ${cliente.activo ? 'Activo' : 'Inactivo'}
+                            </div>
+                            <div><strong>Fecha Registro:</strong> ${new Date(cliente.fecha_registro).toLocaleString()}</div>
+                        </div>
                     `;
 
-                    tbody.appendChild(row);
+                    document.body.appendChild(clienteDiv);
                 });
             } catch (error) {
                 console.error('Error al obtener clientes:', error);
@@ -76,6 +78,5 @@
 
         fetchClientes();
     </script>
-
 </body>
 </html>

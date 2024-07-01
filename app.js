@@ -70,7 +70,7 @@ app.get('/', (req, res) => {
 // });
 
 
-// para cliente.html
+// para cliente.html aqui se registran los usuarios
 
 app.get('/cliente', (req, res) => {
     res.sendFile('./rutas/cliente.html', {
@@ -94,7 +94,9 @@ app.post('/cliente', async (req, res) => {
       console.error('Error al insertar el cliente:', error.stack);
       res.status(500).send('Error al registrar el cliente');
     }
-  });
+});
+
+// clientes.html en este se muestra los usuarios registrados
 
 app.get('/clientes', (req, res) => {
     res.sendFile('./rutas/clientes.html', {
@@ -112,7 +114,165 @@ app.get('/api/clientes', async (req, res) => {
   }
 });
 
+// admin.html
 
+app.get('/admin', (req, res) => {
+  res.sendFile('./rutas/admin.html', {
+    root: __dirname
+  })
+});
+
+// usuarios.html
+
+app.get('/admin/usuarios', (req, res) => {
+  res.sendFile('./rutas/admin/usuarios.html', {
+    root: __dirname
+  })
+});
+app.put('/admin/usuarios', async (req, res) => {
+  const { id_usuario } = req.body;
+  var query;
+  var verificar;
+  try {
+    const prueba = await pool.query('select activo from cliente where id_cliente = $1', [id_usuario]);
+    verificar = prueba.rows[0].activo;
+  }
+  catch (error) {
+    console.log(error)
+  }
+  if (verificar) {
+    query = 'UPDATE cliente SET activo = false WHERE id_cliente = $1';
+  }
+  else {
+    query = 'UPDATE cliente SET activo = true WHERE id_cliente = $1';
+  }
+
+  try {
+    const result = await pool.query(query, [id_usuario] );
+    if (result.rowCount > 0) {
+      res.status(200).json(result.rows[0]);
+    } else {
+      res.status(404).send('Cliente no encontrado');
+    }
+  } catch (error) {
+    res.status(500).send('Error al actualizar el cliente');
+  }
+});
+app.delete('/admin/usuarios', async (req, res) => {
+  const { id_usuario } = req.body;
+  var query = 'DELETE FROM cliente WHERE id_cliente = $1';
+
+  try {
+    const result = await pool.query(query, [id_usuario] );
+    if (result.rowCount > 0) {
+      res.status(200).json(result.rows[0]);
+    } else {
+      res.status(404).send('Cliente no encontrado');
+    }
+  } catch (error) {
+    res.status(500).send('Error al actualizar el cliente');
+  }
+});
+
+// admin/peliculas.html
+
+app.get('/admin/peliculas', (req, res) => {
+  res.sendFile('./rutas/admin/peliculas.html', {
+    root: __dirname
+  })
+});
+app.post('/admin/peliculas', async (req, res) => {
+  const { titulo, descripcion, url, portada, duracion, estreno, fecha_registro } = req.body;
+
+  const query = `
+    INSERT INTO pelicula (titulo, descripcion, direccion_url, portada_url, duracion, ano_estreno, fecha_registro)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+  `;
+
+  try {
+    const result = await pool.query(query, [titulo, descripcion, url, portada, duracion, estreno, fecha_registro]);
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error al insertar la pelicula:', error.stack);
+    res.status(500).send('Error al registrar la pelicula');
+  }
+});
+app.get('/api/peliculas/editar/:id', async (req, res) => {
+
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM pelicula WHERE id_pelicula = $1', [id]);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener clientes:', error.stack);
+    res.status(500).send('Error al obtener clientes');
+  }
+});
+app.put('/admin/peliculas', async (req, res) => {
+  const { id_pelicula, titulo, descripcion, url, portada, duracion, estreno } = req.body;
+
+  const query = `UPDATE pelicula 
+  SET titulo = $2, descripcion = $3, direccion_url = $4, portada_url = $5, duracion = $6, ano_estreno = $7
+  WHERE id_pelicula = $1`;
+
+  try {
+    const result = await pool.query(query, [id_pelicula, titulo, descripcion, url, portada, duracion, estreno] );
+    if (result.rowCount > 0) {
+      res.status(200).json(result.rows[0]);
+    } else {
+      res.status(404).send('pelicula no encontrado');
+    }
+  } catch (error) {
+    res.status(500).send('Error al actualizar la pelicula');
+  }
+});
+app.delete('/admin/peliculas', async (req, res) => {
+  const { id_pelicula } = req.body;
+  var query = 'DELETE FROM pelicula WHERE id_pelicula = $1';
+
+  try {
+    const result = await pool.query(query, [id_pelicula] );
+    if (result.rowCount > 0) {
+      res.status(200).json(result.rows[0]);
+    } else {
+      res.status(404).send('Cliente no encontrado');
+    }
+  } catch (error) {
+    res.status(500).send('Error al actualizar el cliente');
+  }
+});
+
+
+// peliculas.html para mostrar las peliculas
+
+app.get('/peliculas', (req, res) => {
+  res.sendFile('./rutas/peliculas.html', {
+      root: __dirname
+  })
+});
+app.get('/api/peliculas', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM pelicula');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener películas:', error.stack);
+    res.status(500).send('Error al obtener películas');
+  }
+});
+
+// 404
+
+app.use('*', (req, res) => {
+  res.sendFile('./rutas/404.html', {
+      root: __dirname
+  })
+});
+
+// mensaje de que el servidor esta en el puerto 5000
 app.listen(port, () => {
     console.log(`Servidor escuchando en http://localhost:${port}`);
 });
+
+
+
