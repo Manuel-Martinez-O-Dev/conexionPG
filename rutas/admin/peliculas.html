@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>peliculas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        h3 {
+            text-align: center;
+            width: 100%;
+        }
+
+        .form-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-container input,
+        .form-container button {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .form-container button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h3>Agregar o Editar una Película</h3>
+    <div class="form-container">
+        <form id="subirPelicula">
+            <input type="text" id="titulo" placeholder="Título de la película" required>
+            <input type="text" id="descripcion" placeholder="Descripción" required>
+            <input type="text" id="url" placeholder="URL de la película" required>
+            <input type="text" id="portada" placeholder="URL de la portada" required>
+            <input type="number" id="duracion" placeholder="Duración de la película" required>
+            <input type="number" id="estreno" placeholder="Año de estreno" required>
+            <button type="submit">Cargar Película</button>
+        </form>
+
+        <input type="number" id="id_pelicula_editar" placeholder="ID de la película">
+        <button type="button" id="buscar_editar">Buscar</button>
+    </div>
+
+    <h3>Eliminar una Película</h3>
+    <div class="form-container">
+        <form id="eliminarPelicula">
+            <input type="number" id="id_pelicula_eliminar" placeholder="ID de la película">
+            <button type="submit" id="eliminar_pelicula">Eliminar</button>
+        </form>
+    </div>
+
+    <!-- <h3>agregar o editar una pelicula</h3>
+    <form id="subirPelicula">
+        <input type="text" id="titulo" placeholder="titulo de la pelicula" required>
+        <input type="text" id="descripcion" placeholder="descripcion" required>
+        <input type="text" id="url" placeholder="url de la pelicula" required>
+        <input type="text" id="portada" placeholder="url de la portada" required>
+        <input type="number" id="duracion" placeholder="duracion de la pelicula" required>
+        <input type="number" id="estreno" placeholder="año de estreno" required>
+        <button type="submit">cargar pelicula</button>
+    </form>
+
+    <input type="number" id="id_pelicula_editar" placeholder="ID de la pelicula">
+    <button type="button" id="buscar_editar">buscar</button>
+    
+    <h3>eliminar una pelicula</h3>
+    <form id="eliminarPelicula">
+        <input type="number" id="id_pelicula_eliminar" placeholder="ID de la pelicula">
+        <button type="submit" id="eliminar_pelicula">eliminar</button>
+    </form> -->
+    <script>
+        var metodo = 'POST'; 
+        // logica para enviar los datos de una pelicula
+        document.getElementById('subirPelicula').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const data = {
+                id_pelicula: document.getElementById('id_pelicula_editar').value,
+                titulo: document.getElementById('titulo').value,
+                descripcion: document.getElementById('descripcion').value,
+                url: document.getElementById('url').value,
+                portada: document.getElementById('portada').value,
+                duracion: document.getElementById('duracion').value,
+                estreno: document.getElementById('estreno').value,
+                fecha_registro: new Date()
+            };
+
+            try {
+                const response = await fetch('/admin/peliculas', {
+                    method: metodo,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('se cargo correctamente');
+                } else {
+                    alert('Error al cargar la pelicula');
+                }
+                metodo = 'POST';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error en el servidor');
+            }
+        });
+
+        //logica para editar una pelicula
+
+        document.getElementById('buscar_editar').addEventListener('click',
+            async function () {
+                try {
+
+                    const id_pelicula = document.getElementById('id_pelicula_editar').value;
+
+                    const resultado = await fetch(`/api/peliculas/editar/${id_pelicula}`);
+                    const pelicula = await resultado.json();
+
+                    document.getElementById('titulo').value = pelicula[0].titulo;
+                    document.getElementById('descripcion').value = pelicula[0].descripcion;
+                    document.getElementById('url').value = pelicula[0].direccion_url;
+                    document.getElementById('portada').value = pelicula[0].portada_url;
+                    document.getElementById('duracion').value = pelicula[0].duracion;
+                    document.getElementById('estreno').value = pelicula[0].ano_estreno;
+
+                    metodo = 'PUT';
+                }
+                catch (error) {
+                    console.log(error)
+                }
+            }
+        );
+
+        // logica para eliminar una pelicula
+
+        document.getElementById('eliminarPelicula').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const data = {
+                id_pelicula: document.getElementById('id_pelicula_eliminar').value,
+            };
+
+            try {
+                const response = await fetch('/admin/peliculas', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('eliminado correctamente');
+                } else {
+                    alert('Error al eliminar pelicula');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error en el servidor');
+            }
+        });
+
+
+    </script>
+</body>
+</html>
+

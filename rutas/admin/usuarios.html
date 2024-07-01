@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Cliente</title>
+    <title>usuarios</title>
     <style>
         body {
             margin: 0;
@@ -23,14 +22,15 @@
             background-color: #fff;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
-            text-align: center;
         }
-        h2 {
+        h3 {
             margin-top: 0;
             color: #333;
         }
-        input[type="text"],
-        input[type="email"] {
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="number"] {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 10px;
@@ -55,34 +55,29 @@
     </style>
 </head>
 <body>
-
     <div class="container">
-        <form id="clienteForm">
-            <h2>Registro de Cliente</h2>
-            <input type="text" id="nombre" placeholder="Nombre" required>
-            <input type="text" id="apellido" placeholder="Apellido" required>
-            <input type="text" id="nombre_usuario" placeholder="Nombre de Usuario" required>
-            <input type="email" id="correo_electronico" placeholder="Correo Electrónico" required>
-            <button type="submit">Registrar</button>
+        <h3>Cambiar estado del cliente</h3>
+        <form id="modificarUsuario">
+            <input type="number" id="id_usuario_cambiar" placeholder="ID_usuario" required>
+            <button type="submit">Cambiar estado</button>
+        </form>
+        <h3>Eliminar un cliente</h3>
+        <form id="eliminarUsuario">
+            <input type="number" id="id_usuario_eliminar" placeholder="ID_usuario" required>
+            <button type="submit">Eliminar</button>
         </form>
     </div>
-
     <script>
-        document.getElementById('clienteForm').addEventListener('submit', async function (e) {
+        document.getElementById('modificarUsuario').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const data = {
-                nombre: document.getElementById('nombre').value,
-                apellido: document.getElementById('apellido').value,
-                nombre_usuario: document.getElementById('nombre_usuario').value,
-                correo_electronico: document.getElementById('correo_electronico').value,
-                activo: true,
-                fecha_registro: new Date()
+                id_usuario: document.getElementById('id_usuario_cambiar').value,
             };
 
             try {
-                const response = await fetch('/cliente', {
-                    method: 'POST',
+                const response = await fetch('/admin/usuarios', {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -90,9 +85,35 @@
                 });
 
                 if (response.ok) {
-                    alert('Cliente registrado exitosamente');
+                    alert('modificado correctamente');
                 } else {
-                    alert('Error al registrar el cliente');
+                    alert('Error al modificar el cliente');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error en el servidor');
+            }
+        });
+        document.getElementById('eliminarUsuario').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const data = {
+                id_usuario: document.getElementById('id_usuario_eliminar').value,
+            };
+
+            try {
+                const response = await fetch('/admin/usuarios', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('eliminado correctamente');
+                } else {
+                    alert('Error al eliminar el cliente');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -100,6 +121,5 @@
             }
         });
     </script>
-
 </body>
 </html>
