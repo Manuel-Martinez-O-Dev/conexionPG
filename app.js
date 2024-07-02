@@ -9,14 +9,6 @@ const manual = require('./registro/manual');
 const app = express();
 const port = 5000;
 
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'app_data',
-    password: 'melody2025sql',
-    port: 5432,
-});
-
 
 // creacion del registro
 
@@ -25,14 +17,15 @@ app.use('/', manual);
 
 app.use(bodyParser.json());
 
-
+// pagina principal index.html
 app.get('/', (req, res) => {
-    res.sendFile('./rutas/index.html', {
-        root: __dirname
-    })
+  res.sendFile('./rutas/index.html', {
+      root: __dirname
+  })
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(session({
   secret: 'mysecretkey',
   resave: false,
@@ -48,6 +41,15 @@ app.get('/login', (req, res) => {
 
 app.post('/api/login', async (req, res) => {
   const { nombre_usuario, correo_electronico } = req.body;
+
+  const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'app_data',
+    password: 'melody2025sql',
+    port: 5432,
+  });
+
   try {
     const result = await pool.query(
       'SELECT * FROM cliente WHERE nombre_usuario = $1 AND correo_electronico = $2',
@@ -77,57 +79,7 @@ app.get('/api/logout', (req, res) => {
   });
 });
 
-
-
-// ruta register
-
-// app.get('/register', (req, res) => {
-//     res.sendFile('./rutas/register.html', {
-//       root: __dirname
-//     })
-// });
-
-// app.post('/register', async (req, res) => {
-//     const { nombre, apellido, nombre_usuario, correo_electronico } = req.body;
-//     const fecha_registro = new Date();
-  
-//     try {
-//         const result = await pool.query(
-//             'INSERT INTO cliente (nombre, apellido, nombre_usuario, correo_electronico, activo, fecha_registro) VALUES ($1, $2, $3, $4, true, $5) RETURNING *',
-//             [nombre, apellido, nombre_usuario, correo_electronico, fecha_registro]
-//         );
-//         res.status(201).json(result.rows[0]);
-//     } catch (error) {
-//         console.error('Error registering user:', error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// });
-
-// // ruta agregar pelicula
-
-// app.get('/agregar-pelicula', (req, res) => {
-//     res.sendFile('./rutas/agregar-pelicula.html', {
-//       root: __dirname
-//     })
-// });
-// app.post('/agregar-pelicula', async (req, res) => {
-//     const { titulo, descripcion, direccion_url, portada_url, duracion, año_estreno } = req.body;
-//     const fecha_registro = new Date(); // Fecha actual para fecha_registro
-
-//     try {
-//         const result = await pool.query(
-//             'INSERT INTO pelicula(titulo, descripcion, direccion_url, portada_url, duracion, año_estreno, fecha_registro) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-//             [titulo, descripcion, direccion_url, portada_url, duracion, año_estreno, fecha_registro]
-//         );
-//         res.status(201).json(result.rows[0]); // Devolver la película recién registrada como JSON
-//     } catch (error) {
-//         console.error('Error registering movie:', error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// });
-
-
-// para cliente.html aqui se registran los usuarios
+// cliente para registrar nuevos usuarios
 
 app.get('/cliente', (req, res) => {
     res.sendFile('./rutas/cliente.html', {
@@ -136,12 +88,19 @@ app.get('/cliente', (req, res) => {
 });
 
 app.post('/cliente', async (req, res) => {
+
+  const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'app_data',
+    password: 'melody2025sql',
+    port: 5432,
+  });
+  
     const { nombre, apellido, nombre_usuario, correo_electronico, activo, fecha_registro } = req.body;
   
     const query = `
-      INSERT INTO cliente (nombre, apellido, nombre_usuario, correo_electronico, activo, fecha_registro)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING *;
+      SELECT insertNewClient($1, $2, $3, $4, $5, $6)
     `;
   
     try {
@@ -156,9 +115,6 @@ app.post('/cliente', async (req, res) => {
 // clientes.html en este se muestra los usuarios registrados
 
 app.get('/clientes', (req, res) => {
-
-  console.log(!req.session.user)
-  console.log(req.session.user)
   if (!req.session.user) {
     return res.redirect('/login');
   }
@@ -170,6 +126,14 @@ app.get('/clientes', (req, res) => {
 
 app.get('/api/clientes', async (req, res) => {
   try {
+    const datos = req.session.user;
+    const pool = new Pool({
+      user: `${datos.nombre_usuario}`,
+      host: 'localhost',
+      database: 'app_data',
+      password: `${datos.correo_electronico}`,
+      port: 5432,
+    });
     const result = await pool.query('SELECT * FROM cliente');
     res.status(200).json(result.rows);
   } catch (error) {
@@ -204,9 +168,17 @@ app.get('/admin/usuarios', (req, res) => {
 });
 app.put('/admin/usuarios', async (req, res) => {
   const { id_usuario } = req.body;
-  var query;
-  var verificar;
+  let query;
+  let verificar;
   try {
+    const datos = req.session.user;
+    const pool = new Pool({
+      user: `${datos.nombre_usuario}`,
+      host: 'localhost',
+      database: 'app_data',
+      password: `${datos.correo_electronico}`,
+      port: 5432,
+    });
     const prueba = await pool.query('select activo from cliente where id_cliente = $1', [id_usuario]);
     verificar = prueba.rows[0].activo;
   }
@@ -221,6 +193,14 @@ app.put('/admin/usuarios', async (req, res) => {
   }
 
   try {
+    const datos = req.session.user;
+    const pool = new Pool({
+      user: `${datos.nombre_usuario}`,
+      host: 'localhost',
+      database: 'app_data',
+      password: `${datos.correo_electronico}`,
+      port: 5432,
+    });
     const result = await pool.query(query, [id_usuario] );
     if (result.rowCount > 0) {
       res.status(200).json(result.rows[0]);
@@ -233,9 +213,17 @@ app.put('/admin/usuarios', async (req, res) => {
 });
 app.delete('/admin/usuarios', async (req, res) => {
   const { id_usuario } = req.body;
-  var query = 'DELETE FROM cliente WHERE id_cliente = $1';
+  var query = `SELECT deleteClientById($1)`;
 
   try {
+    const datos = req.session.user;
+    const pool = new Pool({
+      user: `${datos.nombre_usuario}`,
+      host: 'localhost',
+      database: 'app_data',
+      password: `${datos.correo_electronico}`,
+      port: 5432,
+    });
     const result = await pool.query(query, [id_usuario] );
     if (result.rowCount > 0) {
       res.status(200).json(result.rows[0]);
@@ -243,7 +231,7 @@ app.delete('/admin/usuarios', async (req, res) => {
       res.status(404).send('Cliente no encontrado');
     }
   } catch (error) {
-    res.status(500).send('Error al actualizar el cliente');
+    res.status(500).send('Error al eliminar el cliente');
   }
 });
 
@@ -268,6 +256,14 @@ app.post('/admin/peliculas', async (req, res) => {
   `;
 
   try {
+    const datos = req.session.user;
+    const pool = new Pool({
+      user: `${datos.nombre_usuario}`,
+      host: 'localhost',
+      database: 'app_data',
+      password: `${datos.correo_electronico}`,
+      port: 5432,
+    });
     const result = await pool.query(query, [titulo, descripcion, url, portada, duracion, estreno, fecha_registro]);
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -280,6 +276,14 @@ app.get('/api/peliculas/editar/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
+    const datos = req.session.user;
+    const pool = new Pool({
+      user: `${datos.nombre_usuario}`,
+      host: 'localhost',
+      database: 'app_data',
+      password: `${datos.correo_electronico}`,
+      port: 5432,
+    });
     const result = await pool.query('SELECT * FROM pelicula WHERE id_pelicula = $1', [id]);
     res.status(200).json(result.rows);
   } catch (error) {
@@ -295,6 +299,14 @@ app.put('/admin/peliculas', async (req, res) => {
   WHERE id_pelicula = $1`;
 
   try {
+    const datos = req.session.user;
+    const pool = new Pool({
+      user: `${datos.nombre_usuario}`,
+      host: 'localhost',
+      database: 'app_data',
+      password: `${datos.correo_electronico}`,
+      port: 5432,
+    });
     const result = await pool.query(query, [id_pelicula, titulo, descripcion, url, portada, duracion, estreno] );
     if (result.rowCount > 0) {
       res.status(200).json(result.rows[0]);
@@ -307,9 +319,17 @@ app.put('/admin/peliculas', async (req, res) => {
 });
 app.delete('/admin/peliculas', async (req, res) => {
   const { id_pelicula } = req.body;
-  var query = 'DELETE FROM pelicula WHERE id_pelicula = $1';
+  const query = 'DELETE FROM pelicula WHERE id_pelicula = $1';
 
   try {
+    const datos = req.session.user;
+    const pool = new Pool({
+      user: `${datos.nombre_usuario}`,
+      host: 'localhost',
+      database: 'app_data',
+      password: `${datos.correo_electronico}`,
+      port: 5432,
+    });
     const result = await pool.query(query, [id_pelicula] );
     if (result.rowCount > 0) {
       res.status(200).json(result.rows[0]);
@@ -336,7 +356,18 @@ app.get('/peliculas', (req, res) => {
 });
 app.get('/api/peliculas', async (req, res) => {
 
+  
+
   try {
+    const datos = req.session.user;
+    const pool = new Pool({
+      user: `${datos.nombre_usuario}`,
+      host: 'localhost',
+      database: 'app_data',
+      password: `${datos.correo_electronico}`,
+      port: 5432,
+    });
+    
     const result = await pool.query('SELECT * FROM pelicula ORDER BY titulo');
     res.status(200).json(result.rows);
   } catch (error) {
@@ -346,8 +377,17 @@ app.get('/api/peliculas', async (req, res) => {
 });
 
 app.get('/api/peliculas/inicio', async (req, res) => {
+  
+  const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'app_data',
+    password: 'melody2025sql',
+    port: 5432,
+  });
 
   try {
+    
     const result = await pool.query('SELECT * FROM pelicula ORDER BY fecha_registro DESC LIMIT 3');
     res.status(200).json(result.rows);
   } catch (error) {
