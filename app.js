@@ -3,6 +3,9 @@ const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
+const router = require('./registro/descargar');
+const manual = require('./registro/manual');
+
 const app = express();
 const port = 5000;
 
@@ -13,6 +16,12 @@ const pool = new Pool({
     password: 'melody2025sql',
     port: 5432,
 });
+
+
+// creacion del registro
+
+app.use('/', router);
+app.use('/', manual);
 
 app.use(bodyParser.json());
 
@@ -328,7 +337,7 @@ app.get('/peliculas', (req, res) => {
 app.get('/api/peliculas', async (req, res) => {
 
   try {
-    const result = await pool.query('SELECT * FROM pelicula');
+    const result = await pool.query('SELECT * FROM pelicula ORDER BY titulo');
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error al obtener películas:', error.stack);
